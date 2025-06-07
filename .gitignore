@@ -5,3 +5,4 @@ venv/
 Thumbs.db
 *.log
 *.tmp
+.env

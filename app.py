@@ -1,15 +1,35 @@
 import requests, os, sqlite3
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, flash
 from dotenv import load_dotenv
 
 load_dotenv()
 app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY")
 GEOAPIFY_KEY = os.getenv("GEOAPIFY_KEY")
 DB_PATH = "data/btravels.db"
 
 @app.route("/")
 def index():
     return render_template("index.html")
+
+@app.route("/support")
+def support():
+    return render_template("support.html")
+
+@app.route("/submit-support", methods=["POST"])
+def submit_support():
+    name = request.form.get("name")
+    email = request.form.get("email")
+    message = request.form.get("message")
+
+    if not (name and email and message):
+        flash("All fields are required.", "error")
+        return redirect("/support")
+
+    #TODO: send email to support team
+    print(f"New support message from {name} <{email}>: {message}")
+
+    return render_template("support_submitted.html", name=name)
 
 @app.route("/search")
 def search():
