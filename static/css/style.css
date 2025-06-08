@@ -188,16 +188,18 @@ body, html {
   border: none;
   background-color: #ffcb05;
   color: #222;
-  font-weight: 600;
+  font-weight: 700;
+  font-style: bold;
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s;
+  height: 100%;
 }
 
 .search-box button:hover {
   background-color: #e6b800;
 }
-  
+
 #placesList {
   margin-top: 1.5rem;
   text-align: left;
@@ -270,4 +272,46 @@ body, html {
     position: static;
     margin-top: 0.5rem;
   }
+}
+
+.autocomplete-container {
+  position: relative;
+  flex: 1;
+}
+.autocomplete-container input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  box-shadow: none;
+  outline: none;   
+}
+.autocomplete-container input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+
+.autocomplete-items {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  z-index: 1000;
+  max-height: 200px;
+  overflow-y: auto;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.autocomplete-items div {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.autocomplete-items div:hover {
+  background-color: #f0f0f0;
 }

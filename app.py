@@ -81,5 +81,25 @@ def search():
 
     return jsonify(places)
 
+@app.route("/autocomplete")
+def autocomplete():
+    query = request.args.get("text")
+    if not query:
+        return jsonify([])
+
+    try:
+        geo_url = "https://api.geoapify.com/v1/geocode/autocomplete"
+        params = {
+            "text": query,
+            "limit": 5,
+            "apiKey": GEOAPIFY_KEY
+        }
+        response = requests.get(geo_url, params=params)
+        response.raise_for_status()
+        return jsonify(response.json())
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == "__main__":
     app.run(debug=True)

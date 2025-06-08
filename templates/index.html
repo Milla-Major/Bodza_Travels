@@ -29,8 +29,11 @@
             <h1 class="title">Bodza Travels</h1>
             <p class="subtitle">Discover the best places to visit in your city with Bodza!</p>
             <form id="cityForm" class="search-box">
-                <input type="text" name="city" id="cityInput" placeholder="Give me a city and I'll show you what to do!" autocomplete="off" />
-                <button type="submit">Let's go!</button>
+                <div class="autocomplete-container">
+                    <input type="text" name="city" id="cityInput" placeholder="Give me a city and I'll show you what to do!" autocomplete="off" />
+                    <div id="autocomplete-list" class="autocomplete-items"></div>
+                </div>
+                <button type="submit">LET'S GO!</button>
             </form>
             <div id="placesList"></div>
         </div>
