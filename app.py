@@ -12,6 +12,10 @@ DB_PATH = "data/btravels.db"
 def index():
     return render_template("index.html")
 
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
 @app.route("/support")
 def support():
     return render_template("support.html")

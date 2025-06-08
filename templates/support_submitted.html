@@ -3,25 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="../static/images/logo.ico" type="image/x-icon" />
   <title>Support Submitted</title>
   <link rel="stylesheet" href="../static/css/style.css" />
 </head>
 <body>
   <header class="navbar">
-    <nav class="nav-menu">
-      <span class="nav-logo">Bodza Travels</span>
-      <div class="nav-center">
-        <a href="/" class="nav-item">HOME</a>
-        <a href="/support" class="nav-item">BACK</a>
-      </div>
-    </nav>
+        <nav class="nav-menu">
+            <span class="nav-logo">
+                <img src="../static/images/logo.png" alt="logo">
+                Bodza Travels
+            </span>
+            <div class="nav-center">
+                <a href="/" class="nav-item">HOME</a>
+                <a href="/about" class="nav-item">ABOUT</a>
+            </div>
+            <div class="nav-right">
+                <a href="/support" class="nav-support">HELP</a>
+            </div>
+        </nav>
   </header>
 
-  <main class="hero">
-    <div class="hero-overlay">
+  <main class="main-content">
+    <div class="main-content-overlay">
       <h1 class="title">Thank you, {{ name }}!</h1>
       <p class="subtitle">Your message has been received. We'll get back to you as soon as possible.</p>
-      <a href="/" class="nav-support">Go back to home</a>
+      <a href="/" class="form-back">Go back to home</a>
     </div>
   </main>
 
