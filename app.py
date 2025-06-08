@@ -1,6 +1,7 @@
 import requests, os, sqlite3
 from flask import Flask, render_template, request, jsonify, redirect, flash
 from dotenv import load_dotenv
+from database import get_recent_places, save_search
 
 load_dotenv()
 app = Flask(__name__)
@@ -16,6 +17,12 @@ def index():
 def about():
     return render_template("about.html")
 
+@app.route("/recent_places")
+def recent_places():
+    places = get_recent_places()
+    return render_template("recent_places.html", places=places)
+
+
 @app.route("/support")
 def support():
     return render_template("support.html")
@@ -30,22 +37,18 @@ def submit_support():
         flash("All fields are required.", "error")
         return redirect("/support")
 
-    #TODO: send email to support team
     print(f"New support message from {name} <{email}>: {message}")
 
     return render_template("support_submitted.html", name=name)
 
 @app.route("/search")
 def search():
-    city_name = request.args.get("city_name")
+    raw_city = request.args.get("city_name", "")
+    city_name = raw_city.strip().title() 
     if not city_name:
         return jsonify({"error": "Please enter a city name."}), 400
-
     try:
-        with sqlite3.connect(DB_PATH) as conn:
-            c = conn.cursor()
-            c.execute("INSERT INTO searches (city_name) VALUES (?)", (city_name,))
-            conn.commit()
+        save_search(city_name)
     except Exception as e:
         return jsonify({"error": "Failed to save search.", "details": str(e)}), 500
 
@@ -61,6 +64,7 @@ def search():
         return jsonify({"error": f"Could not find location: '{city_name}'"}), 404
     except Exception as e:
         return jsonify({"error": "Error while geocoding", "details": str(e)}), 500
+
     try:
         place_url = "https://api.geoapify.com/v2/places"
         place_params = {
@@ -74,6 +78,7 @@ def search():
         places = place_res.json()
     except Exception as e:
         return jsonify({"error": "Could not retrieve places.", "details": str(e)}), 500
+
     return jsonify(places)
 
 if __name__ == "__main__":
