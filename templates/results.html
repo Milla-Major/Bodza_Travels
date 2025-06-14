@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bodza Travels – Results</title>
+    <link rel="stylesheet" href="../static/css/style.css" />
+    <link rel="icon" href="../static/images/logo.ico" type="image/x-icon" />
+</head>
+<body>
+    <header class="navbar">
+        <nav class="nav-menu">
+            <span class="nav-logo">
+                <img src="../static/images/logo.png" alt="logo">
+                Bodza Travels
+            </span>
+            <div class="nav-center">
+                <a href="/" class="nav-item">HOME</a>
+                <a href="/about" class="nav-item">ABOUT</a>
+                <a href="/recent_places" class="nav-item">RECENTLY SEARCHED</a>
+            </div>
+            <div class="nav-right">
+                <a href="/support" class="nav-support">HELP</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="main-content-overlay">
+            {% if error %}
+                <h2 class="title">Oops!</h2>
+                <p class="subtitle">{{ error }}</p>
+            {% else %}
+                <h2 class="title">Top sights in {{ city }}</h2>
+                {% if sights %}
+                    <ul class="recent-list">
+                        {% for place in sights %}
+                            <li>
+                            <a href="https://www.google.com/search?q={{ (place.properties.name ~ ' ' ~ city)|urlencode }}" target="_blank">
+                                <strong>{{ place.properties.name or "Unnamed place" }}</strong>
+                            </a>
+                            <br>
+                            {{ place.properties.address_line1 or "" }}
+                            {% if place.properties.categories %}
+                                <!--<br><em>{{ place.properties.categories | join(', ') }}</em>-->
+                                <br><em>{{ place.properties.simple_categories | join(', ') }}</em>
+                            {% endif %}
+                            </li>
+                        {% endfor %}
+                        </ul>
+                {% else %}
+                    <p class="subtitle">No attractions found in {{ city }} :(</p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>Milla Major&copy;</p>
+        <p>NHL Stenden</p>
+        <p>2025</p>
+    </footer>
+    <script src="../static/js/res_filter.js"></script>
+</body>
+</html>

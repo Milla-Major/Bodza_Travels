@@ -9,6 +9,10 @@ app.secret_key = os.getenv("SECRET_KEY")
 GEOAPIFY_KEY = os.getenv("GEOAPIFY_KEY")
 DB_PATH = "data/btravels.db"
 
+import json
+with open("category_map.json", "r", encoding="utf-8") as f:
+    CATEGORY_MAP = json.load(f)
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -41,45 +45,76 @@ def submit_support():
 
     return render_template("support_submitted.html", name=name)
 
-@app.route("/search")
-def search():
-    raw_city = request.args.get("city_name", "")
-    city_name = raw_city.strip().title() 
+
+@app.route("/results")
+def results():
+    city_name = request.args.get("city")
     if not city_name:
-        return jsonify({"error": "Please enter a city name."}), 400
-    try:
-        save_search(city_name)
-    except Exception as e:
-        return jsonify({"error": "Failed to save search.", "details": str(e)}), 500
+        return render_template("results.html", error="No city name provided.")
 
     try:
+        save_search(city_name)
         geo_url = "https://api.geoapify.com/v1/geocode/search"
         geo_params = {"text": city_name, "apiKey": GEOAPIFY_KEY}
         geo_res = requests.get(geo_url, params=geo_params)
+        geo_res.raise_for_status()
         geo_data = geo_res.json()
 
-        lat = geo_data["features"][0]["geometry"]["coordinates"][1]
-        lon = geo_data["features"][0]["geometry"]["coordinates"][0]
-    except (KeyError, IndexError):
-        return jsonify({"error": f"Could not find location: '{city_name}'"}), 404
-    except Exception as e:
-        return jsonify({"error": "Error while geocoding", "details": str(e)}), 500
+        if not geo_data.get("features"):
+            return render_template("results.html", error=f"No location found for '{city_name}'.")
 
-    try:
+        coords = geo_data["features"][0]["geometry"]["coordinates"]
+        if not coords or len(coords) != 2:
+            return render_template("results.html", error="Invalid location coordinates received.")
+
+        lon, lat = coords[0], coords[1]
+
         place_url = "https://api.geoapify.com/v2/places"
         place_params = {
             "categories": "tourism.sights",
             "filter": f"circle:{lon},{lat},5000",
-            "limit": 20,
+            "limit": 50,
             "apiKey": GEOAPIFY_KEY
         }
         place_res = requests.get(place_url, params=place_params)
         place_res.raise_for_status()
-        places = place_res.json()
-    except Exception as e:
-        return jsonify({"error": "Could not retrieve places.", "details": str(e)}), 500
+        place_data = place_res.json()
 
-    return jsonify(places)
+        raw_sights = place_data.get("features", [])
+        if not raw_sights:
+            return render_template("results.html", city=city_name, sights=[], message="No sights found in this city.")
+        #dupl
+        seen = set()
+        unique_sights = []
+        for s in raw_sights:
+            props = s.get("properties", {})
+            geom = s.get("geometry", {})
+            name = props.get("name", "").strip().lower()
+            addr = props.get("address_line1", "").strip().lower()
+            coords = tuple(round(c, 5) for c in geom.get("coordinates", []))
+            #categories = tuple(sorted(props.get("categories", [])))
+            categories_raw = props.get("categories", [])
+            categories = tuple(sorted(categories_raw))
+            simple_categories = list({CATEGORY_MAP.get(cat, cat.split(".")[-1]) for cat in categories_raw})
+            props["simple_categories"] = simple_categories
+            key = (name, addr, coords, categories)
+            if name and key not in seen:
+                seen.add(key)
+                unique_sights.append(s)
+
+        return render_template("results.html", city=city_name, sights=unique_sights)
+
+    except requests.exceptions.HTTPError as http_err:
+        return render_template("results.html", error=f"HTTP error occurred: {http_err}")
+    except requests.exceptions.ConnectionError:
+        return render_template("results.html", error="Network error: Failed to connect to Geoapify API.")
+    except requests.exceptions.Timeout:
+        return render_template("results.html", error="Request to Geoapify timed out.")
+    except requests.exceptions.RequestException as req_err:
+        return render_template("results.html", error=f"Request error: {req_err}")
+    except Exception as e:
+        return render_template("results.html", error=f"Unexpected error: {str(e)}")
+
 
 @app.route("/autocomplete")
 def autocomplete():
