@@ -26,7 +26,8 @@
     </header>
     <main class="main-content">
         <div class="main-content-overlay">
-            <h1 class="title">Most Searched Cities</h1>
+            <h1 class="title">Recently Searched Cities</h1>
+            <p class="subtitle">Ordered by popularity</p>
             <ul class="recent-list">
                 {% for city, count in places %}
                     <li><strong>{{ city }}</strong> — {{ count }} searches</li>
