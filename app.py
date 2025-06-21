@@ -1,4 +1,4 @@
-import requests, os, sqlite3
+import requests, os, sqlite3, json
 from flask import Flask, render_template, request, jsonify, redirect, flash
 from dotenv import load_dotenv
 from database import get_recent_places, save_search
@@ -9,7 +9,7 @@ app.secret_key = os.getenv("SECRET_KEY")
 GEOAPIFY_KEY = os.getenv("GEOAPIFY_KEY")
 DB_PATH = "data/btravels.db"
 
-import json
+
 with open("category_map.json", "r", encoding="utf-8") as f:
     CATEGORY_MAP = json.load(f)
 
