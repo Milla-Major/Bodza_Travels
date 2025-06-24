@@ -1,3 +1,5 @@
+// https://www.geoapify.com/places-api/ sample codes and the help of chatGPT, I tried to understand everything and write myself as much code as I can
+//https://apidocs.geoapify.com/playground/places/?map=14.668569700787023%2F53.204647995336245%2F5.793251336771391&categories=%5B%22tourism.sights%22%5D&conditions=%5B%5D
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("cityForm");
   const input = document.getElementById("cityInput");

@@ -1,6 +1,7 @@
 import sqlite3, os, tempfile, pytest, database
 from database import save_search, get_recent_places
 
+
 ORIGINAL_DB_PATH = database.DB_PATH
 
 @pytest.fixture

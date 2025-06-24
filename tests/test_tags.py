@@ -1,5 +1,6 @@
 import pytest,json, os
 
+
 @pytest.fixture(scope="module")
 def category_map():
     """Load the category map JSON once for all tests."""

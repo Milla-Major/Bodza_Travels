@@ -1,6 +1,7 @@
 import os, pytest
 from bs4 import BeautifulSoup
 
+
 HTML_DIR = "templates"
 
 @pytest.fixture

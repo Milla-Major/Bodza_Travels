@@ -2,7 +2,7 @@ import requests, os, sqlite3, json
 from flask import Flask, render_template, request, jsonify, redirect, flash
 from dotenv import load_dotenv
 from database import get_recent_places, save_search
-
+# I used the flask documentation and the course materials to learn how to set up the app correctly
 load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
@@ -46,7 +46,7 @@ def submit_support():
     return render_template("support_submitted.html", name=name)
 
 
-@app.route("/results")
+@app.route("/results") #I used the help of chatgpt to make this function work correctly
 def results():
     city_name = request.args.get("city")
     if not city_name:
@@ -116,7 +116,7 @@ def results():
         return render_template("results.html", error=f"Unexpected error: {str(e)}")
 
 
-@app.route("/autocomplete")
+@app.route("/autocomplete") #help from Geoapify docs
 def autocomplete():
     query = request.args.get("text")
     if not query:
@@ -124,11 +124,7 @@ def autocomplete():
 
     try:
         geo_url = "https://api.geoapify.com/v1/geocode/autocomplete"
-        params = {
-            "text": query,
-            "limit": 5,
-            "apiKey": GEOAPIFY_KEY
-        }
+        params = {"text": query, "limit": 5, "apiKey": GEOAPIFY_KEY }
         response = requests.get(geo_url, params=params)
         response.raise_for_status()
         return jsonify(response.json())
